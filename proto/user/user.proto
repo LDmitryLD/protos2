@@ -31,7 +31,7 @@ message ProfileResponse {
 }
 
 message Task {
-    string task_id = 1;
+    uint32 task_id = 1;
     string task_name = 2;
     string description = 3;
 }
