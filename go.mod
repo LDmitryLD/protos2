@@ -1,3 +1,3 @@
-module projects/LDmitryLD/task-service/protos
+module github.com/LDmitryLD/protos2
 
 go 1.19
