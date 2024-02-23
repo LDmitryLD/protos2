@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsererClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	Profile(ctx context.Context, in *ProfileRequest, opts ...grpc.CallOption) (*ProfileResponse, error)
+	Exists(ctx context.Context, in *ExistsRequest, opts ...grpc.CallOption) (*ExistsResponse, error)
 }
 
 type usererClient struct {
@@ -52,12 +53,22 @@ func (c *usererClient) Profile(ctx context.Context, in *ProfileRequest, opts ...
 	return out, nil
 }
 
+func (c *usererClient) Exists(ctx context.Context, in *ExistsRequest, opts ...grpc.CallOption) (*ExistsResponse, error) {
+	out := new(ExistsResponse)
+	err := c.cc.Invoke(ctx, "/usergrpc.Userer/Exists", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsererServer is the server API for Userer service.
 // All implementations must embed UnimplementedUsererServer
 // for forward compatibility
 type UsererServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	Profile(context.Context, *ProfileRequest) (*ProfileResponse, error)
+	Exists(context.Context, *ExistsRequest) (*ExistsResponse, error)
 	mustEmbedUnimplementedUsererServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUsererServer) Create(context.Context, *CreateRequest) (*Creat
 }
 func (UnimplementedUsererServer) Profile(context.Context, *ProfileRequest) (*ProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
+}
+func (UnimplementedUsererServer) Exists(context.Context, *ExistsRequest) (*ExistsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Exists not implemented")
 }
 func (UnimplementedUsererServer) mustEmbedUnimplementedUsererServer() {}
 
@@ -120,6 +134,24 @@ func _Userer_Profile_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Userer_Exists_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExistsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsererServer).Exists(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usergrpc.Userer/Exists",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsererServer).Exists(ctx, req.(*ExistsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Userer_ServiceDesc is the grpc.ServiceDesc for Userer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Userer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Profile",
 			Handler:    _Userer_Profile_Handler,
+		},
+		{
+			MethodName: "Exists",
+			Handler:    _Userer_Exists_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

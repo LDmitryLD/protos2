@@ -7,6 +7,7 @@ option go_package = "github.com/LDmitryLD/protos2/gen/user";
 service Userer {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc Profile(ProfileRequest) returns (ProfileResponse);
+    rpc Exists(ExistsRequest) returns (ExistsResponse);
 }
 
 message CreateRequest {
@@ -30,8 +31,17 @@ message ProfileResponse {
     repeated Task tasks = 4;
 }
 
+message ExistsRequest {
+    uint32 id = 1;
+}
+
+message ExistsResponse {
+    bool exists = 1;
+}
+
 message Task {
     uint32 task_id = 1;
     string task_name = 2;
     string description = 3;
 }
+
